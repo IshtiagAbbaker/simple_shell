@@ -1,87 +1,159 @@
 #include "inshell.h"
 
 /**
- * shstrcpy - Copies a string.
- * @dest: The destination.
- * @src: The source.
+ * add_nod - Adds a node to the start of the list.
+ * @head: Address of pointer to head node.
+ * @str: str field of node.
+ * @number: Node index used by history.
  *
- * Return: Pointer to destination.
+ * Return: Size of list.
  */
-char *shstrcpy(char *dest, char *src)
+inlist *add_nod(inlist **head, const char *str, int number)
 {
-	int i = 0;
+	inlist *new_head;
 
-	if (dest == src || src == 0)
-		return (dest);
-	while (src[i])
+	if (!head)
+		return (NULL);
+	new_head = malloc(sizeof(inlist));
+	if (!new_head)
+		return (NULL);
+	mset((void *)new_head, 0, sizeof(inlist));
+	new_head->num = number;
+	if (str)
 	{
-		dest[i] = src[i];
+		new_head->str = shstrdup(str);
+		if (!new_head->str)
+		{
+			free(new_head);
+			return (NULL);
+		}
+	}
+	new_head->next = *head;
+	*head = new_head;
+	return (new_head);
+}
+
+/**
+ * add_nod_end - Adds a node to the end of the list.
+ * @head: Address of pointer to head node.
+ * @str: str field of node.
+ * @num: Node index used by history.
+ *
+ * Return: Size of list.
+ */
+inlist *add_nod_end(inlist **head, const char *str, int num)
+{
+	inlist *new_nod, *node;
+
+	if (!head)
+		return (NULL);
+
+	node = *head;
+	new_nod = malloc(sizeof(inlist));
+	if (!new_nod)
+		return (NULL);
+	mset((void *)new_nod, 0, sizeof(inlist));
+	new_nod->num = num;
+	if (str)
+	{
+		new_nod->str = shstrdup(str);
+		if (!new_nod->str)
+		{
+			free(new_nod);
+			return (NULL);
+		}
+	}
+	if (node)
+	{
+		while (node->next)
+			node = node->next;
+		node->next = new_nod;
+	}
+	else
+		*head = new_nod;
+	return (new_nod);
+}
+
+/**
+ * printList_str - Prints only the str element of an inlist linked list.
+ * @h: Pointer to first node.
+ *
+ * Return: Size of list.
+ */
+size_t printList_str(const inlist *h)
+{
+	size_t i = 0;
+
+	while (h)
+	{
+		shputs(h->str ? h->str : "(nil)");
+		shputs("\n");
+		h = h->next;
 		i++;
 	}
-	dest[i] = 0;
-	return (dest);
+	return (i);
 }
 
 /**
- * shstrdup - Duplicates a string.
- * @str: The string to duplicate.
+ * delete_nod_at_index - Deletes node at the given index.
+ * @head: Address of pointer to first node.
+ * @index: Index of node to delete.
  *
- * Return: Pointer to the duplicated string.
+ * Return: 1 on success, 0 on failure.
  */
-char *shstrdup(const char *str)
+int delete_nod_at_index(inlist **head, unsigned int index)
 {
-	int length = 0;
-	char *ret;
+	inlist *node, *prev_nod;
+	unsigned int i = 0;
 
-	if (str == NULL)
-		return (NULL);
-	while (*str++)
-		length++;
-	ret = malloc(sizeof(char) * (length + 1));
-	if (!ret)
-		return (NULL);
-	for (length++; length--;)
-		ret[length] = *--str;
-	return (ret);
+	if (!head || !*head)
+		return (0);
+
+	if (!index)
+	{
+		node = *head;
+		*head = (*head)->next;
+		free(node->str);
+		free(node);
+		return (1);
+	}
+	node = *head;
+	while (node)
+	{
+		if (i == index)
+		{
+			prev_nod->next = node->next;
+			free(node->str);
+			free(node);
+			return (1);
+		}
+		i++;
+		prev_nod = node;
+		node = node->next;
+	}
+	return (0);
 }
 
 /**
- * shputs - Prints an input string.
- * @str: The string to be printed.
+ * free_list - Frees all nodes of a list.
+ * @head_ptr: Address of pointer to head node.
  *
- * Return: Nothing.
+ * Return: void.
  */
-void shputs(char *str)
+void free_list(inlist **head_ptr)
 {
-	int i = 0;
+	inlist *node, *next_nod, *head;
 
-	if (!str)
+	if (!head_ptr || !*head_ptr)
 		return;
-	while (str[i] != '\0')
+	head = *head_ptr;
+	node = head;
+	while (node)
 	{
-		_putchar(str[i]);
-		i++;
+		next_nod = node->next;
+		free(node->str);
+		free(node);
+		node = next_nod;
 	}
-}
-
-/**
- * _putchar - Writes the character c to stdout.
- * @c: The character to print.
- *
- * Return: On success 1.
- * On error, -1 is returned, and errno is set appropriately.
- */
-int _putchar(char c)
-{
-	static int i;
-	static char buf[WRITE_BUF_SIZE];
-
-	if (c == BUF_FLUSH || i >= WRITE_BUF_SIZE)
-	{
-		write(1, buf, i);
-		i = 0;
-	}
-	if (c != BUF_FLUSH)
-		buf[i++] = c;
-	return (1);
+	*head_ptr = NULL;
 }
