@@ -39,11 +39,11 @@ int inerratoi(char *str)
  */
 void printError(info_t *info, char *errorStr)
 {
-	ineputs(info->fname);
+	ineputs(info->infname);
 	ineputs(": ");
-	printd(info->line_count, STDERR_FILENO);
+	printd(info->inline_count, STDERR_FILENO);
 	ineputs(": ");
-	ineputs(info->argv[0]);
+	ineputs(info->inargv[0]);
 	ineputs(": ");
 	ineputs(errorStr);
 }
@@ -62,7 +62,7 @@ int printd(int input, int fd)
 	unsigned int absValue, current;
 
 	if (fd == STDERR_FILENO)
-		__putchar = ineputchar;
+		__putchar = inputchar;
 	if (input < 0)
 	{
 		absValue = -input;

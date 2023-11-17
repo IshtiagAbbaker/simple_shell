@@ -42,9 +42,9 @@ int writeHistory(info_t *info)
 	free(filename);
 	if (fd == -1)
 		return (-1);
-	for (node = info->history; node; node = node->next)
+	for (node = info->inhistory; node; node = node->nxt)
 	{
-		inputsfd(node->str, fd);
+		inputsfd(node->strng, fd);
 		niputfd('\n', fd);
 	}
 	niputfd(BUF_FLUSH, fd);
@@ -94,11 +94,11 @@ int readHistory(info_t *info)
 	if (last != i)
 		buildHistory_list(info, buf + last, linecount++);
 	free(buf);
-	info->histcount = linecount;
-	while (info->histcount-- >= HIST_MAX)
-		delete_nod_at_index(&(info->history), 0);
+	info->inhistcount = linecount;
+	while (info->inhistcount-- >= HIST_MAX)
+		delete_nod_at_index(&(info->inhistory), 0);
 	renumberHistory(info);
-	return (info->histcount);
+	return (info->inhistcount);
 }
 
 /**
@@ -113,12 +113,12 @@ int buildHistory_list(info_t *info, char *buf, int linecount)
 {
 	inlist *node = NULL;
 
-	if (info->history)
-		node = info->history;
+	if (info->inhistory)
+		node = info->inhistory;
 	add_nod_end(&node, buf, linecount);
 
-	if (!info->history)
-		info->history = node;
+	if (!info->inhistory)
+		info->inhistory = node;
 	return (0);
 }
 
@@ -130,13 +130,13 @@ int buildHistory_list(info_t *info, char *buf, int linecount)
  */
 int renumberHistory(info_t *inf)
 {
-	inlist *nod = inf->history;
+	inlist *nod = inf->inhistory;
 	int k = 0;
 
 	while (nod)
 	{
-		nod->num = k++;
-		nod = nod->next;
+		nod->number = k++;
+		nod = nod->nxt;
 	}
-	return (inf->histcount = k);
+	return (inf->inhistcount = k);
 }

@@ -30,12 +30,12 @@ ssize_t input_buf(info_t *info, char **buf, size_t *len)
 				(*buf)[r - 1] = '\0';
 				r--;
 			}
-			info->linecount_flag = 1;
+			info->inlinecount_flag = 1;
 			rm_comments(*buf);
-			buildHistory_list(info, *buf, info->histcount++);
+			buildHistory_list(info, *buf, info->inhistcount++);
 			{
 				*len = r;
-				info->cmd_buf = buf;
+				info->incmd_buf = buf;
 			}
 		}
 	}
@@ -53,7 +53,7 @@ ssize_t get_input(info_t *info)
 	static char *buf;
 	static size_t i, j, len;
 	ssize_t r = 0;
-	char **buf_p = &(info->arg), *p;
+	char **buf_p = &(info->inarg), *p;
 
 	_putchar(BUF_FLUSH);
 	r = input_buf(info, &buf, &len);
@@ -76,7 +76,7 @@ ssize_t get_input(info_t *info)
 		if (i >= len)
 		{
 			i = len = 0;
-			info->cmd_buf_type = CMD_NORM;
+			info->incmd_buf_type = CMD_NORM;
 		}
 
 		*buf_p = p;
@@ -101,7 +101,7 @@ ssize_t read_buf(info_t *info, char *buf, size_t *i)
 
 	if (*i)
 		return (0);
-	s = read(info->readfd, buf, READ_BUF_SIZE);
+	s = read(info->inreadfd, buf, READ_BUF_SIZE);
 	if (s >= 0)
 		*i = s;
 	return (s);

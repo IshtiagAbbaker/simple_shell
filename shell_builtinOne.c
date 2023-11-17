@@ -9,7 +9,7 @@
  */
 int inmyhistory(info_t *shell_info)
 {
-	printList(shell_info->history);
+	printList(shell_info->inhistory);
 	return (0);
 }
 
@@ -30,8 +30,8 @@ int unset_alias(info_t *shell_info, char *str)
 		return (1);
 	c = *p;
 	*p = 0;
-	ret = delete_nod_at_index(&(shell_info->alias),
-			get_nod_index(shell_info->alias, nod_strt_with(shell_info->alias, str, -1)));
+	ret = delete_nod_at_index(&(shell_info->inalias),
+			get_nod_index(shell_info->inalias, nod_strt_with(shell_info->inalias, str, -1)));
 	*p = c;
 	return (ret);
 }
@@ -54,7 +54,7 @@ int set_alias(info_t *shell_info, char *str)
 		return (unset_alias(shell_info, str));
 
 	unset_alias(shell_info, str);
-	return (add_nod_end(&(shell_info->alias), str, 0) == NULL);
+	return (add_nod_end(&(shell_info->inalias), str, 0) == NULL);
 }
 
 /**
@@ -69,8 +69,8 @@ int print_alias(inlist *node)
 
 	if (node)
 	{
-		p = shstrchr(node->str, '=');
-		for (a = node->str; a <= p; a++)
+		p = shstrchr(node->strng, '=');
+		for (a = node->strng; a <= p; a++)
 			_putchar(*a);
 		_putchar('\'');
 		shputs(p + 1);
@@ -92,23 +92,23 @@ int inmyalias(info_t *shell_info)
 	char *p = NULL;
 	inlist *node = NULL;
 
-	if (shell_info->argc == 1)
+	if (shell_info->inargc == 1)
 	{
-		node = shell_info->alias;
+		node = shell_info->inalias;
 		while (node)
 		{
 			print_alias(node);
-			node = node->next;
+			node = node->nxt;
 		}
 		return (0);
 	}
-	for (i = 1; shell_info->argv[i]; i++)
+	for (i = 1; shell_info->inargv[i]; i++)
 	{
-		p = shstrchr(shell_info->argv[i], '=');
+		p = shstrchr(shell_info->inargv[i], '=');
 		if (p)
-			set_alias(shell_info, shell_info->argv[i]);
+			set_alias(shell_info, shell_info->inargv[i]);
 		else
-			print_alias(nod_strt_with(shell_info->alias, shell_info->argv[i], '='));
+			print_alias(nod_strt_with(shell_info->inalias, shell_info->inargv[i], '='));
 	}
 
 	return (0);

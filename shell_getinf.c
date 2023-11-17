@@ -6,10 +6,10 @@
  */
 void clear_inf(info_t *info)
 {
-	info->arg = NULL;
-	info->argv = NULL;
-	info->path = NULL;
-	info->argc = 0;
+	info->inarg = NULL;
+	info->inargv = NULL;
+	info->inpath = NULL;
+	info->inargc = 0;
 }
 
 /**
@@ -21,22 +21,22 @@ void set_inf(info_t *info, char **av)
 {
 	int i = 0;
 
-	info->fname = av[0];
-	if (info->arg)
+	info->infname = av[0];
+	if (info->inarg)
 	{
-		info->argv = str_tow(info->arg, " \t");
-		if (!info->argv)
+		info->inargv = str_tow(info->inarg, " \t");
+		if (!info->inargv)
 		{
-			info->argv = malloc(sizeof(char *) * 2);
-			if (info->argv)
+			info->inargv = malloc(sizeof(char *) * 2);
+			if (info->inargv)
 			{
-				info->argv[0] = shstrdup(info->arg);
-				info->argv[1] = NULL;
+				info->inargv[0] = shstrdup(info->inarg);
+				info->inargv[1] = NULL;
 			}
 		}
-		for (i = 0; info->argv && info->argv[i]; i++)
+		for (i = 0; info->inargv && info->inargv[i]; i++)
 			;
-		info->argc = i;
+		info->inargc = i;
 
 		replaceAlias(info);
 		replaceVars(info);
@@ -50,24 +50,24 @@ void set_inf(info_t *info, char **av)
  */
 void free_inf(info_t *info, int all)
 {
-	fffree(info->argv);
-	info->argv = NULL;
-	info->path = NULL;
+	fffree(info->inargv);
+	info->inargv = NULL;
+	info->inpath = NULL;
 	if (all)
 	{
-		if (!info->cmd_buf)
-			free(info->arg);
-		if (info->env)
-			free_list(&(info->env));
-		if (info->history)
-			free_list(&(info->history));
-		if (info->alias)
-			free_list(&(info->alias));
-		fffree(info->environ);
-		info->environ = NULL;
-		pfree((void **)info->cmd_buf);
-		if (info->readfd > 2)
-			close(info->readfd);
+		if (!info->incmd_buf)
+			free(info->inarg);
+		if (info->inenv)
+			free_list(&(info->inenv));
+		if (info->inhistory)
+			free_list(&(info->inhistory));
+		if (info->inalias)
+			free_list(&(info->inalias));
+		fffree(info->inenviron);
+		info->inenviron = NULL;
+		pfree((void **)info->incmd_buf);
+		if (info->inreadfd > 2)
+			close(info->inreadfd);
 		_putchar(BUF_FLUSH);
 	}
 }

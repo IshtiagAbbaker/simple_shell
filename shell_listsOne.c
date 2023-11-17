@@ -12,7 +12,7 @@ size_t list_len(const inlist *h)
 
 	while (h)
 	{
-		h = h->next;
+		h = h->nxt;
 		i++;
 	}
 	return (i);
@@ -36,9 +36,9 @@ char **inlist_to_strings(inlist *head)
 	strs = malloc(sizeof(char *) * (i + 1));
 	if (!strs)
 		return (NULL);
-	for (i = 0; node; node = node->next, i++)
+	for (i = 0; node; node = node->nxt, i++)
 	{
-		str = malloc(shstrlen(node->str) + 1);
+		str = malloc(shstrlen(node->strng) + 1);
 		if (!str)
 		{
 			for (j = 0; j < i; j++)
@@ -47,7 +47,7 @@ char **inlist_to_strings(inlist *head)
 			return (NULL);
 		}
 
-		str = shstrcpy(str, node->str);
+		str = shstrcpy(str, node->strng);
 		strs[i] = str;
 	}
 	strs[i] = NULL;
@@ -66,12 +66,12 @@ size_t printList(const inlist *h)
 
 	while (h)
 	{
-		shputs(convertNumber(h->num, 10, 0));
+		shputs(convertNumber(h->number, 10, 0));
 		_putchar(':');
 		_putchar(' ');
-		shputs(h->str ? h->str : "(nil)");
+		shputs(h->strng ? h->strng : "(nil)");
 		shputs("\n");
-		h = h->next;
+		h = h->nxt;
 		i++;
 	}
 	return (i);
@@ -91,10 +91,10 @@ inlist *nod_strt_with(inlist *node, char *prefix, char c)
 
 	while (node)
 	{
-		p = strt_with(node->str, prefix);
+		p = strt_with(node->strng, prefix);
 		if (p && ((c == -1) || (*p == c)))
 			return (node);
-		node = node->next;
+		node = node->nxt;
 	}
 	return (NULL);
 }
@@ -114,7 +114,7 @@ ssize_t get_nod_index(inlist *head, inlist *node)
 	{
 		if (head == node)
 			return (i);
-		head = head->next;
+		head = head->nxt;
 		i++;
 	}
 	return (-1);

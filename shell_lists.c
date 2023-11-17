@@ -18,17 +18,17 @@ inlist *add_nod(inlist **head, const char *str, int number)
 	if (!new_head)
 		return (NULL);
 	mset((void *)new_head, 0, sizeof(inlist));
-	new_head->num = number;
+	new_head->number = number;
 	if (str)
 	{
-		new_head->str = shstrdup(str);
-		if (!new_head->str)
+		new_head->strng = shstrdup(str);
+		if (!new_head->strng)
 		{
 			free(new_head);
 			return (NULL);
 		}
 	}
-	new_head->next = *head;
+	new_head->nxt = *head;
 	*head = new_head;
 	return (new_head);
 }
@@ -53,11 +53,11 @@ inlist *add_nod_end(inlist **head, const char *str, int num)
 	if (!new_nod)
 		return (NULL);
 	mset((void *)new_nod, 0, sizeof(inlist));
-	new_nod->num = num;
+	new_nod->number = num;
 	if (str)
 	{
-		new_nod->str = shstrdup(str);
-		if (!new_nod->str)
+		new_nod->strng = shstrdup(str);
+		if (!new_nod->strng)
 		{
 			free(new_nod);
 			return (NULL);
@@ -65,9 +65,9 @@ inlist *add_nod_end(inlist **head, const char *str, int num)
 	}
 	if (node)
 	{
-		while (node->next)
-			node = node->next;
-		node->next = new_nod;
+		while (node->nxt)
+			node = node->nxt;
+		node->nxt = new_nod;
 	}
 	else
 		*head = new_nod;
@@ -86,9 +86,9 @@ size_t printList_str(const inlist *h)
 
 	while (h)
 	{
-		shputs(h->str ? h->str : "(nil)");
+		shputs(h->strng ? h->strng : "(nil)");
 		shputs("\n");
-		h = h->next;
+		h = h->nxt;
 		i++;
 	}
 	return (i);
@@ -112,8 +112,8 @@ int delete_nod_at_index(inlist **head, unsigned int index)
 	if (!index)
 	{
 		node = *head;
-		*head = (*head)->next;
-		free(node->str);
+		*head = (*head)->nxt;
+		free(node->strng);
 		free(node);
 		return (1);
 	}
@@ -122,14 +122,14 @@ int delete_nod_at_index(inlist **head, unsigned int index)
 	{
 		if (i == index)
 		{
-			prev_nod->next = node->next;
-			free(node->str);
+			prev_nod->nxt = node->nxt;
+			free(node->strng);
 			free(node);
 			return (1);
 		}
 		i++;
 		prev_nod = node;
-		node = node->next;
+		node = node->nxt;
 	}
 	return (0);
 }
@@ -150,8 +150,8 @@ void free_list(inlist **head_ptr)
 	node = head;
 	while (node)
 	{
-		next_nod = node->next;
-		free(node->str);
+		next_nod = node->nxt;
+		free(node->strng);
 		free(node);
 		node = next_nod;
 	}

@@ -8,7 +8,7 @@
  */
 int interact(info_t *shell_info)
 {
-	return (isatty(STDIN_FILENO) && shell_info->read_fd <= 2);
+	return (isatty(STDIN_FILENO) && shell_info->inreadfd <= 2);
 }
 
 /**

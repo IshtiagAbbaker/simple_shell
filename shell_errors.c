@@ -14,19 +14,19 @@ void ineputs(char *str)
 		return;
 	while (str[index] != '\0')
 	{
-		ineputchar(str[index]);
+		inputchar(str[index]);
 		index++;
 	}
 }
 
 /**
- * ineputchar - Writes the character c to stderr.
+ * inputchar - Writes the character c to stderr.
  * @c: The character to print.
  *
  * Return: On success 1.
  * On error, -1 is returned, and errno is set appropriately.
  */
-int ineputchar(char c)
+int inputchar(char c)
 {
 	static int buffer_index;
 	static char buf[WRITE_BUF_SIZE];

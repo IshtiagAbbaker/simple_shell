@@ -8,13 +8,13 @@
  */
 char **getEnviron(info_t *info)
 {
-	if (!info->environ || info->envChanged)
+	if (!info->inenviron || info->inenv_changed)
 	{
-		info->environ = list_to_strings(info->env);
-		info->envChanged = 0;
+		info->inenviron = list_to_strings(info->inenv);
+		info->inenv_changed = 0;
 	}
 
-	return (info->environ);
+	return (info->inenviron);
 }
 
 /**
@@ -26,7 +26,7 @@ char **getEnviron(info_t *info)
  */
 int inunsetenv(info_t *info, char *envVar)
 {
-	inlist *node = info->env;
+	inlist *node = info->inenv;
 	size_t index = 0;
 	char *p;
 
@@ -35,18 +35,18 @@ int inunsetenv(info_t *info, char *envVar)
 
 	while (node)
 	{
-		p = strt_with(node->str, envVar);
+		p = strt_with(node->strng, envVar);
 		if (p && *p == '=')
 		{
-			info->envChanged = delete_nod_at_index(&(info->env), index);
+			info->inenv_changed = delete_nod_at_index(&(info->inenv), index);
 			index = 0;
-			node = info->env;
+			node = info->inenv;
 			continue;
 		}
-		node = node->next;
+		node = node->nxt;
 		index++;
 	}
-	return (info->envChanged);
+	return (info->inenv_changed);
 }
 
 /**
@@ -73,21 +73,21 @@ int insetenv(info_t *info, char *envVar, char *value)
 	shstrcpy(buf, envVar);
 	shstrcat(buf, "=");
 	shstrcat(buf, value);
-	node = info->env;
+	node = info->inenv;
 	while (node)
 	{
-		p = strt_with(node->str, envVar);
+		p = strt_with(node->strng, envVar);
 		if (p && *p == '=')
 		{
-			free(node->str);
-			node->str = buf;
-			info->envChanged = 1;
+			free(node->strng);
+			node->strng = buf;
+			info->inenv_changed = 1;
 			return (0);
 		}
-		node = node->next;
+		node = node->nxt;
 	}
-	add_nod_end(&(info->env), buf, 0);
+	add_nod_end(&(info->inenv), buf, 0);
 	free(buf);
-	info->envChanged = 1;
+	info->inenv_changed = 1;
 	return (0);
 }

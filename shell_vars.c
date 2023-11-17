@@ -16,18 +16,18 @@ int inis_chain(info_t *info, char *buf, size_t *p)
 	{
 		buf[j] = 0;
 		j++;
-		info->cmd_buf_type = CMD_OR;
+		info->incmd_buf_type = CMD_OR;
 	}
 	else if (buf[j] == '&' && buf[j + 1] == '&')
 	{
 		buf[j] = 0;
 		j++;
-		info->cmd_buf_type = CMD_AND;
+		info->incmd_buf_type = CMD_AND;
 	}
 	else if (buf[j] == ';') /* found end of this command */
 	{
 		buf[j] = 0; /* replace semicolon with null */
-		info->cmd_buf_type = CMD_CHAIN;
+		info->incmd_buf_type = CMD_CHAIN;
 	}
 	else
 		return (0);
@@ -49,17 +49,17 @@ void checkChain(info_t *info, char *buf, size_t *p, size_t i, size_t len)
 {
 	size_t j = *p;
 
-	if (info->cmd_buf_type == CMD_AND)
+	if (info->incmd_buf_type == CMD_AND)
 	{
-		if (info->status)
+		if (info->instatus)
 		{
 			buf[i] = 0;
 			j = len;
 		}
 	}
-	if (info->cmd_buf_type == CMD_OR)
+	if (info->incmd_buf_type == CMD_OR)
 	{
-		if (!info->status)
+		if (!info->instatus)
 		{
 			buf[i] = 0;
 			j = len;
@@ -83,17 +83,17 @@ int replaceAlias(info_t *info)
 
 	for (i = 0; i < 10; i++)
 	{
-		node = nod_strt_with(info->alias, info->argv[0], '=');
+		node = nod_strt_with(info->inalias, info->inargv[0], '=');
 		if (!node)
 			return (0);
-		free(info->argv[0]);
-		p = shstrchr(node->str, '=');
+		free(info->inargv[0]);
+		p = shstrchr(node->strng, '=');
 		if (!p)
 			return (0);
 		p = shstrdup(p + 1);
 		if (!p)
 			return (0);
-		info->argv[0] = p;
+		info->inargv[0] = p;
 	}
 	return (1);
 }
@@ -109,31 +109,31 @@ int replaceVars(info_t *info)
 	int i = 0;
 	inlist *node;
 
-	for (i = 0; info->argv[i]; i++)
+	for (i = 0; info->inargv[i]; i++)
 	{
-		if (info->argv[i][0] != '$' || !info->argv[i][1])
+		if (info->inargv[i][0] != '$' || !info->inargv[i][1])
 			continue;
 
-		if (!shstrcmp(info->argv[i], "$?"))
+		if (!shstrcmp(info->inargv[i], "$?"))
 		{
-			replaceString(&(info->argv[i]),
-				shstrdup(convertNumber(info->status, 10, 0)));
+			replaceString(&(info->inargv[i]),
+				shstrdup(convertNumber(info->instatus, 10, 0)));
 			continue;
 		}
-		if (!shstrcmp(info->argv[i], "$$"))
+		if (!shstrcmp(info->inargv[i], "$$"))
 		{
-			replaceString(&(info->argv[i]),
+			replaceString(&(info->inargv[i]),
 				shstrdup(convertNumber(getpid(), 10, 0)));
 			continue;
 		}
-		node = nod_strt_with(info->env, &info->argv[i][1], '=');
+		node = nod_strt_with(info->inenv, &info->inargv[i][1], '=');
 		if (node)
 		{
-			replaceString(&(info->argv[i]),
-				shstrdup(shstrchr(node->str, '=') + 1));
+			replaceString(&(info->inargv[i]),
+				shstrdup(shstrchr(node->strng, '=') + 1));
 			continue;
 		}
-		replaceString(&info->argv[i], shstrdup(""));
+		replaceString(&info->inargv[i], shstrdup(""));
 	}
 	return (0);
 }

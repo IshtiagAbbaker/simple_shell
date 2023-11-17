@@ -29,13 +29,13 @@ int main(int count, char **vector)
 				ineputs(vector[0]);
 				ineputs(": 0: Can't open ");
 				ineputs(vector[1]);
-				ineputchar('\n');
-				ineputchar(BUF_FLUSH);
+				inputchar('\n');
+				inputchar(BUF_FLUSH);
 				exit(127);
 			}
 			return (EXIT_FAILURE);
 		}
-		info->readfd = fd;
+		info->inreadfd = fd;
 	}
 	populateEnv_list(info);
 	readHistory(info);

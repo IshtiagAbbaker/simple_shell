@@ -113,7 +113,7 @@ char *dup_chrs(char *, int, int);
 char *fd_path(info_t *, char *, char *);
 int loophshell(char **);
 void ineputs(char *);
-int ineputchar(char);
+int inputchar(char);
 int niputfd(char c, int fd);
 int inputsfd(char *str, int fd);
 int shstrlen(char *);
@@ -156,8 +156,8 @@ int mygetline(info_t *, char **, size_t *);
 
 void sigintHandler(int);
 
-void clear_inf(info_t *);
-void set_inf(info_t *, char **);
+void clear_ininfo(info_t *);
+void set_ininfo(info_t *, char **);
 void free_inf(info_t *, int);
 
 char *ingetenv(info_t *, const char *);
