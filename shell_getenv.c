@@ -1,93 +1,94 @@
-#include "inshell.h"
+#include "shell.h"
 
 /**
- * getEnviron - Returns the string array copy of our environ.
+ * get_environ - returns the string array copy of our environ
  * @info: Structure containing potential arguments. Used to maintain
- *        constant function prototype.
- * Return: Always 0.
+ *          constant function prototype.
+ * Return: Always 0
  */
-char **getEnviron(info_t *info)
+char **get_environ(info_t *info)
 {
-	if (!info->inenviron || info->inenv_changed)
+	if (!info->environ || info->env_changed)
 	{
-		info->inenviron = list_to_strings(info->inenv);
-		info->inenv_changed = 0;
+		info->environ = list_to_strings(info->env);
+		info->env_changed = 0;
 	}
 
-	return (info->inenviron);
+	return (info->environ);
 }
 
 /**
- * inunsetenv - Remove an environment variable.
+ * _unsetenv - Remove an environment variable
  * @info: Structure containing potential arguments. Used to maintain
  *        constant function prototype.
- * Return: 1 on delete, 0 otherwise.
- * @envVar: The string environment variable property.
+ *  Return: 1 on delete, 0 otherwise
+ * @var: the string env var property
  */
-int inunsetenv(info_t *info, char *envVar)
+int _unsetenv(info_t *info, char *var)
 {
-	inlist *node = info->inenv;
-	size_t index = 0;
+	list_t *node = info->env;
+	size_t i = 0;
 	char *p;
 
-	if (!node || !envVar)
+	if (!node || !var)
 		return (0);
 
 	while (node)
 	{
-		p = strt_with(node->strng, envVar);
+		p = starts_with(node->str, var);
 		if (p && *p == '=')
 		{
-			info->inenv_changed = delete_nod_at_index(&(info->inenv), index);
-			index = 0;
-			node = info->inenv;
+			info->env_changed = delete_node_at_index(&(info->env), i);
+			i = 0;
+			node = info->env;
 			continue;
 		}
-		node = node->nxt;
-		index++;
+		node = node->next;
+		i++;
 	}
-	return (info->inenv_changed);
+	return (info->env_changed);
 }
 
 /**
- * insetenv - Initialize a new environment variable,
- *            or modify an existing one.
+ * _setenv - Initialize a new environment variable,
+ *             or modify an existing one
  * @info: Structure containing potential arguments. Used to maintain
  *        constant function prototype.
- * @envVar: The string environment variable property.
- * @value: The string environment variable value.
- * Return: Always 0.
+ * @var: the string env var property
+ * @value: the string env var value
+ *  Return: Always 0
  */
-int insetenv(info_t *info, char *envVar, char *value)
+int _setenv(info_t *info, char *var, char *value)
 {
 	char *buf = NULL;
-	inlist *node;
+	list_t *node;
 	char *p;
 
-	if (!envVar || !value)
+	if (!var || !value)
 		return (0);
 
-	buf = malloc(shstrlen(envVar) + shstrlen(value) + 2);
+	buf = malloc(_strlen(var) + _strlen(value) + 2);
 	if (!buf)
 		return (1);
-	shstrcpy(buf, envVar);
-	shstrcat(buf, "=");
-	shstrcat(buf, value);
-	node = info->inenv;
+	_strcpy(buf, var);
+	_strcat(buf, "=");
+	_strcat(buf, value);
+	node = info->env;
 	while (node)
 	{
-		p = strt_with(node->strng, envVar);
+		p = starts_with(node->str, var);
 		if (p && *p == '=')
 		{
-			free(node->strng);
-			node->strng = buf;
-			info->inenv_changed = 1;
+			free(node->str);
+			node->str = buf;
+			info->env_changed = 1;
 			return (0);
 		}
-		node = node->nxt;
+		node = node->next;
 	}
-	add_nod_end(&(info->inenv), buf, 0);
+	add_node_end(&(info->env), buf, 0);
 	free(buf);
-	info->inenv_changed = 1;
+	info->env_changed = 1;
 	return (0);
 }
+

@@ -1,18 +1,19 @@
-#include "inshell.h"
+#include "shell.h"
 
 /**
- * pfree - Frees a pointer and NULLs the address.
- * @ptrtf: Address of the pointer to free.
+ * bfree - frees a pointer and NULLs the address
+ * @ptr: address of the pointer to free
  *
  * Return: 1 if freed, otherwise 0.
  */
-int pfree(void **ptrtf)
+int bfree(void **ptr)
 {
-	if (ptrtf && *ptrtf)
+	if (ptr && *ptr)
 	{
-		free(*ptrtf);
-		*ptrtf = NULL;
+		free(*ptr);
+		*ptr = NULL;
 		return (1);
 	}
 	return (0);
 }
+

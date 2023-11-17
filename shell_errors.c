@@ -1,85 +1,86 @@
-#include "inshell.h"
+#include "shell.h"
 
 /**
- * ineputs - Prints an input string.
- * @str: The string to be printed.
+ *_eputs - prints an input string
+ * @str: the string to be printed
  *
- * Return: Nothing.
+ * Return: Nothing
  */
-void ineputs(char *str)
+void _eputs(char *str)
 {
-	int index = 0;
+	int i = 0;
 
 	if (!str)
 		return;
-	while (str[index] != '\0')
+	while (str[i] != '\0')
 	{
-		inputchar(str[index]);
-		index++;
+		_eputchar(str[i]);
+		i++;
 	}
 }
 
 /**
- * inputchar - Writes the character c to stderr.
- * @c: The character to print.
+ * _eputchar - writes the character c to stderr
+ * @c: The character to print
  *
  * Return: On success 1.
  * On error, -1 is returned, and errno is set appropriately.
  */
-int inputchar(char c)
+int _eputchar(char c)
 {
-	static int buffer_index;
+	static int i;
 	static char buf[WRITE_BUF_SIZE];
 
-	if (c == BUF_FLUSH || buffer_index >= WRITE_BUF_SIZE)
+	if (c == BUF_FLUSH || i >= WRITE_BUF_SIZE)
 	{
-		write(2, buf, buffer_index);
-		buffer_index = 0;
+		write(2, buf, i);
+		i = 0;
 	}
 	if (c != BUF_FLUSH)
-		buf[buffer_index++] = c;
+		buf[i++] = c;
 	return (1);
 }
 
 /**
- * niputfd - Writes the character c to given fd.
- * @c: The character to print.
- * @fd: The file descriptor to write to.
+ * _putfd - writes the character c to given fd
+ * @c: The character to print
+ * @fd: The filedescriptor to write to
  *
  * Return: On success 1.
  * On error, -1 is returned, and errno is set appropriately.
  */
-int niputfd(char c, int fd)
+int _putfd(char c, int fd)
 {
-	static int buffer_index;
+	static int i;
 	static char buf[WRITE_BUF_SIZE];
 
-	if (c == BUF_FLUSH || buffer_index >= WRITE_BUF_SIZE)
+	if (c == BUF_FLUSH || i >= WRITE_BUF_SIZE)
 	{
-		write(fd, buf, buffer_index);
-		buffer_index = 0;
+		write(fd, buf, i);
+		i = 0;
 	}
 	if (c != BUF_FLUSH)
-		buf[buffer_index++] = c;
+		buf[i++] = c;
 	return (1);
 }
 
 /**
- * inputsfd - Prints an input string.
- * @str: The string to be printed.
- * @fd: The file descriptor to write to.
+ *_putsfd - prints an input string
+ * @str: the string to be printed
+ * @fd: the filedescriptor to write to
  *
- * Return: The number of characters put.
+ * Return: the number of chars put
  */
-int inputsfd(char *str, int fd)
+int _putsfd(char *str, int fd)
 {
-	int count = 0;
+	int i = 0;
 
 	if (!str)
 		return (0);
 	while (*str)
 	{
-		count += niputfd(*str++, fd);
+		i += _putfd(*str++, fd);
 	}
-	return (count);
+	return (i);
 }
+

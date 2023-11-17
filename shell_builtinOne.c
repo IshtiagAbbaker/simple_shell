@@ -1,115 +1,116 @@
-#include "inshell.h"
+#include "shell.h"
 
 /**
- * inmyhistory - Displays the history list, one command per line, preceded
- *               with line numbers, starting at 0.
- * @shell_info: Structure containing potential arguments. Used to maintain
- *              constant function prototype.
- * Return: Always 0
+ * _myhistory - displays the history list, one command by line, preceded
+ *              with line numbers, starting at 0.
+ * @info: Structure containing potential arguments. Used to maintain
+ *        constant function prototype.
+ *  Return: Always 0
  */
-int inmyhistory(info_t *shell_info)
+int _myhistory(info_t *info)
 {
-	printList(shell_info->inhistory);
+	print_list(info->history);
 	return (0);
 }
 
 /**
- * unset_alias - Sets alias to string.
- * @shell_info: Parameter struct.
- * @str: The string alias.
+ * unset_alias - sets alias to string
+ * @info: parameter struct
+ * @str: the string alias
  *
- * Return: Always 0 on success, 1 on error.
+ * Return: Always 0 on success, 1 on error
  */
-int unset_alias(info_t *shell_info, char *str)
+int unset_alias(info_t *info, char *str)
 {
 	char *p, c;
 	int ret;
 
-	p = shstrchr(str, '=');
+	p = _strchr(str, '=');
 	if (!p)
 		return (1);
 	c = *p;
 	*p = 0;
-	ret = delete_nod_at_index(&(shell_info->inalias),
-			get_nod_index(shell_info->inalias, nod_strt_with(shell_info->inalias, str, -1)));
+	ret = delete_node_at_index(&(info->alias),
+		get_node_index(info->alias, node_starts_with(info->alias, str, -1)));
 	*p = c;
 	return (ret);
 }
 
 /**
- * set_alias - Sets alias to string.
- * @shell_info: Parameter struct.
- * @str: The string alias.
+ * set_alias - sets alias to string
+ * @info: parameter struct
+ * @str: the string alias
  *
- * Return: Always 0 on success, 1 on error.
+ * Return: Always 0 on success, 1 on error
  */
-int set_alias(info_t *shell_info, char *str)
+int set_alias(info_t *info, char *str)
 {
 	char *p;
 
-	p = shstrchr(str, '=');
+	p = _strchr(str, '=');
 	if (!p)
 		return (1);
 	if (!*++p)
-		return (unset_alias(shell_info, str));
+		return (unset_alias(info, str));
 
-	unset_alias(shell_info, str);
-	return (add_nod_end(&(shell_info->inalias), str, 0) == NULL);
+	unset_alias(info, str);
+	return (add_node_end(&(info->alias), str, 0) == NULL);
 }
 
 /**
- * print_alias - Prints an alias string.
- * @node: The alias node.
+ * print_alias - prints an alias string
+ * @node: the alias node
  *
- * Return: Always 0 on success, 1 on error.
+ * Return: Always 0 on success, 1 on error
  */
-int print_alias(inlist *node)
+int print_alias(list_t *node)
 {
 	char *p = NULL, *a = NULL;
 
 	if (node)
 	{
-		p = shstrchr(node->strng, '=');
-		for (a = node->strng; a <= p; a++)
+		p = _strchr(node->str, '=');
+		for (a = node->str; a <= p; a++)
 			_putchar(*a);
 		_putchar('\'');
-		shputs(p + 1);
-		shputs("'\n");
+		_puts(p + 1);
+		_puts("'\n");
 		return (0);
 	}
 	return (1);
 }
 
 /**
- * inmyalias - Mimics the alias builtin (man alias).
- * @shell_info: Structure containing potential arguments. Used to maintain
- *              constant function prototype.
- * Return: Always 0.
+ * _myalias - mimics the alias builtin (man alias)
+ * @info: Structure containing potential arguments. Used to maintain
+ *          constant function prototype.
+ *  Return: Always 0
  */
-int inmyalias(info_t *shell_info)
+int _myalias(info_t *info)
 {
 	int i = 0;
 	char *p = NULL;
-	inlist *node = NULL;
+	list_t *node = NULL;
 
-	if (shell_info->inargc == 1)
+	if (info->argc == 1)
 	{
-		node = shell_info->inalias;
+		node = info->alias;
 		while (node)
 		{
 			print_alias(node);
-			node = node->nxt;
+			node = node->next;
 		}
 		return (0);
 	}
-	for (i = 1; shell_info->inargv[i]; i++)
+	for (i = 1; info->argv[i]; i++)
 	{
-		p = shstrchr(shell_info->inargv[i], '=');
+		p = _strchr(info->argv[i], '=');
 		if (p)
-			set_alias(shell_info, shell_info->inargv[i]);
+			set_alias(info, info->argv[i]);
 		else
-			print_alias(nod_strt_with(shell_info->inalias, shell_info->inargv[i], '='));
+			print_alias(node_starts_with(info->alias, info->argv[i], '='));
 	}
 
 	return (0);
 }
+
