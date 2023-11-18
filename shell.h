@@ -107,9 +107,9 @@ typedef struct builtin
 } builtin_table;
 
 int hsh(info_t *, char **);
-int find_builtin(info_t *);
-void find_cmd(info_t *);
-void fork_cmd(info_t *);
+int find_built(info_t *);
+void find_command(info_t *);
+void fork_command(info_t *);
 
 int is_cmd(info_t *, char *);
 char *dup_chars(char *, int, int);
@@ -179,7 +179,7 @@ ssize_t get_input(info_t *);
 int _getline(info_t *, char **, size_t *);
 void sigintHandler(int);
 
-void clear_info(info_t *);
+void clear_information(info_t *);
 void set_info(info_t *, char **);
 void free_info(info_t *, int);
 
